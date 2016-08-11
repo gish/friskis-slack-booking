@@ -1,5 +1,6 @@
 import bodyParser from 'body-parser'
 import express from 'express'
+import moment from 'moment'
 import FriskisApiWrapper from 'friskis-js-api-wrapper'
 
 const PORT = process.env.PORT
@@ -35,8 +36,8 @@ app.post('/', (req, res) => {
     apikey: FRISKIS_API_KEY,
     username: FRISKIS_USERNAME,
     password: FRISKIS_PASSWORD,
-    startdate: '2016-09-09',
-    enddate: '2016-09-09',
+    startDate: moment().add(0, 'days').format('YYYY-MM-DD'),
+    endDate: moment().add(5, 'days').format('YYYY-MM-DD'),
     businessunitids: '1'
   })
   .then((response) => {

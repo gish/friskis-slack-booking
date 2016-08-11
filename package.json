@@ -27,7 +27,8 @@
     "babelify": "^7.3.0",
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
-    "friskis-js-api-wrapper": "github:gish/friskis-js-api-wrapper"
+    "friskis-js-api-wrapper": "github:gish/friskis-js-api-wrapper",
+    "moment": "^2.14.1"
   },
   "devDependencies": {
     "babel-cli": "^6.11.4"
