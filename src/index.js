@@ -18,11 +18,12 @@ app.post('/', (req, res) => {
   const text = req.query.text
 
   if (token !== SLACK_TOKEN) {
+    console.log(`Unauthorized POST. Provided token: ${token}`)
+    res.status(401)
     res.send({
       error: 'Unauthorized',
       message: 'Invalid Slack token'
-    }) 
-    res.sendStatus(401)
+    })
   }
 
   FriskisApiWrapper.getActivities({
@@ -35,7 +36,7 @@ app.post('/', (req, res) => {
   })
   .then((response) => {
     const activities = response.activities.activity.map((activity) => {
-        return activity.product.name
+      return activity.product.name
     })
 
     res.status(200)
@@ -45,6 +46,5 @@ app.post('/', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
-  console.log(`Slack token: ${SLACK_TOKEN}`) 
+  console.log(`Slack token: ${SLACK_TOKEN}`)
 })
-
