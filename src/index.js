@@ -14,8 +14,8 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.post('/', (req, res) => {
-  const token = req.query.token
-  const text = req.query.text
+  const token = req.body.token
+  const text = req.body.text
 
   if (token !== SLACK_TOKEN) {
     console.log(`Unauthorized POST. Provided token: ${token}`)
