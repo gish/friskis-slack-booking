@@ -14,32 +14,37 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.post('/', (req, res) => {
-    const token = req.query.token
-    const text = req.query.text
+  const token = req.query.token
+  const text = req.query.text
 
-    if (token !== SLACK_TOKEN) {
-        res.sendStatus(401)
-    }
+  if (token !== SLACK_TOKEN) {
+    res.send({
+      error: 'Unauthorized',
+      message: 'Invalid Slack token'
+    }) 
+    res.sendStatus(401)
+  }
 
-    FriskisApiWrapper.getActivities({
-        apikey: FRISKIS_API_KEY,
-        username: FRISKIS_USERNAME,
-        password: FRISKIS_PASSWORD,
-        startdate: '2016-09-09',
-        enddate: '2016-09-09',
-        businessunitids: '1'
+  FriskisApiWrapper.getActivities({
+    apikey: FRISKIS_API_KEY,
+    username: FRISKIS_USERNAME,
+    password: FRISKIS_PASSWORD,
+    startdate: '2016-09-09',
+    enddate: '2016-09-09',
+    businessunitids: '1'
+  })
+  .then((response) => {
+    const activities = response.activities.activity.map((activity) => {
+        return activity.product.name
     })
-    .then((response) => {
-        const activities = response.activities.activity.map((activity) => {
-            return activity.product.name
-        })
 
-        res.status(200)
-        res.send(activities)
-    })
+    res.status(200)
+    res.send(activities)
+  })
 })
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
+  console.log(`Server running on port ${PORT}`)
+  console.log(`Slack token: ${SLACK_TOKEN}`) 
 })
 
