@@ -14,9 +14,44 @@ const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
+const findActivities = function (search) {
+  return new Promise((resolve, reject) => {
+    FriskisApiWrapper.getActivities({
+      apikey: FRISKIS_API_KEY,
+      username: FRISKIS_USERNAME,
+      password: FRISKIS_PASSWORD,
+      startDate: moment().add(0, 'days').format('YYYY-MM-DD'),
+      endDate: moment().add(5, 'days').format('YYYY-MM-DD'),
+      businessunitids: '1'
+    })
+    .then((response) => {
+      console.log(response, search)
+      const searchParam = search.toLowerCase()
+      console.log(response)
+      const activities = response.activities.activity
+      let foundActivities = activities.filter((activity) => {
+        const name = activity.product.name.toLowerCase()
+
+        return name.indexOf(searchParam) !== -1
+      })
+      console.log(foundActivities)
+      foundActivities = foundActivities.map((activity) => {
+        return {
+          id: activity.id,
+          starttime: activity.start.timepoint.datetime,
+          name: activity.product.name,
+          bookableslots: activity.bookableslots
+        }
+      })
+      resolve(foundActivities)
+    })
+  })
+}
+
 app.post('/', (req, res) => {
   const token = req.body.token
   const text = req.body.text
+  const responseUrl = req.body.response_url
   const payload = text.match(/^([a-z]+) ([a-z0-9]+)$/).slice(1)
   const command = {
     action: payload[0],
@@ -32,34 +67,12 @@ app.post('/', (req, res) => {
     })
   }
 
-  FriskisApiWrapper.getActivities({
-    apikey: FRISKIS_API_KEY,
-    username: FRISKIS_USERNAME,
-    password: FRISKIS_PASSWORD,
-    startDate: moment().add(0, 'days').format('YYYY-MM-DD'),
-    endDate: moment().add(5, 'days').format('YYYY-MM-DD'),
-    businessunitids: '1'
-  })
+  findActivities(command.data)
   .then((response) => {
-    const searchParam = command.data.toLowerCase()
-    const activities = response.activities.activity
-    const foundActivities = activities.filter((activity) => {
-      const name = activity.product.name.toLowerCase()
-
-      return name.indexOf(searchParam) !== -1
-    })
-    .map((activity) => {
-      return {
-        id: activity.id,
-        starttime: activity.start.timepoint.datetime,
-        name: activity.product.name,
-        bookableslots: activity.bookableslots
-      }
-    })
-
-    res.status(200)
-    res.send(foundActivities)
+    // Send to response url
   })
+  res.status(200)
+  res.send(`Searching for "${command.data}"`)
 })
 
 app.listen(PORT, () => {
