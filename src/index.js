@@ -16,6 +16,11 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.post('/', (req, res) => {
   const token = req.body.token
   const text = req.body.text
+  const payload = text.match(/^([a-z]+) ([a-z0-9]+)$/).slice(1)
+  const command = {
+    action: payload[0],
+    data: payload[1]
+  }
 
   if (token !== SLACK_TOKEN) {
     console.log(`Unauthorized POST. Provided token: ${token}`)
@@ -35,12 +40,24 @@ app.post('/', (req, res) => {
     businessunitids: '1'
   })
   .then((response) => {
-    const activities = response.activities.activity.map((activity) => {
-      return activity.product.name
+    const searchParam = command.data.toLowerCase()
+    const activities = response.activities.activity
+    const foundActivities = activities.filter((activity) => {
+      const name = activity.product.name.toLowerCase()
+
+      return name.indexOf(searchParam) !== -1
+    })
+    .map((activity) => {
+      return {
+        id: activity.id,
+        starttime: activity.start.timepoint.datetime,
+        name: activity.product.name,
+        bookableslots: activity.bookableslots
+      }
     })
 
     res.status(200)
-    res.send(activities)
+    res.send(foundActivities)
   })
 })
 
