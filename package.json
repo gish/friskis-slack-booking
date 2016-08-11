@@ -1,0 +1,35 @@
+{
+  "name": "friskis-slack-booking",
+  "version": "0.0.1",
+  "description": "Webhook for managing activity bookings at Friskis &amp; Svettis Uppsala",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run dist && node dist/index.js",
+    "dev": "nodemon --exec npm run babel-node -- src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "babel-node": "babel-node --presets es2015",
+    "build": "babel src --out-dir dist",
+    "dist": "rm -rf dist && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gish/friskis-slack-booking.git"
+  },
+  "author": "Erik Hedberg <erik@hedberg.at>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gish/friskis-slack-booking/issues"
+  },
+  "homepage": "https://github.com/gish/friskis-slack-booking#readme",
+  "dependencies": {
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.13.2",
+    "babelify": "^7.3.0",
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "friskis-js-api-wrapper": "github:gish/friskis-js-api-wrapper"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.11.4"
+  }
+}
