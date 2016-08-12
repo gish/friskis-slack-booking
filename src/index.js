@@ -30,8 +30,9 @@ const findActivities = function (search) {
       const activities = response.activities.activity
       const foundActivities = activities.filter((activity) => {
         const name = activity.product.name.toLowerCase()
+        const bookableSlots = parseInt(activity.bookableslots, 10)
 
-        return name.indexOf(searchParam) !== -1
+        return name.indexOf(searchParam) !== -1 && bookableSlots > 0
       })
       .map((activity) => {
         return {
@@ -43,6 +44,21 @@ const findActivities = function (search) {
       })
       resolve(foundActivities)
     })
+  })
+}
+
+const sendDelayedReponse = function (responseUrl, params) {
+  console.log(`Sends response to ${responseUrl}`)
+  console.log(params)
+  request.post({
+    json: params,
+    uri: responseUrl
+  }, (error, response, body) => {
+    if (error) {
+      console.log(error)
+    } else {
+      console.log(body)
+    }
   })
 }
 
@@ -67,16 +83,8 @@ app.post('/', (req, res) => {
 
   findActivities(command.data)
   .then((response) => {
-    console.log(`Sends response to ${responseUrl}`)
-    request.post({
-      json: { text: JSON.stringify(response) },
-      uri: responseUrl
-    }, (error, response, body) => {
-      if (error) {
-        console.log(error)
-      } else {
-        console.log(body)
-      }
+    sendDelayedReponse(responseUrl, {
+      text: JSON.stringify(response)
     })
   })
   res.status(200)
