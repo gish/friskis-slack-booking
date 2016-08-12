@@ -25,17 +25,14 @@ const findActivities = function (search) {
       businessunitids: '1'
     })
     .then((response) => {
-      console.log(response, search)
       const searchParam = search.toLowerCase()
-      console.log(response)
       const activities = response.activities.activity
-      let foundActivities = activities.filter((activity) => {
+      const foundActivities = activities.filter((activity) => {
         const name = activity.product.name.toLowerCase()
 
         return name.indexOf(searchParam) !== -1
       })
-      console.log(foundActivities)
-      foundActivities = foundActivities.map((activity) => {
+      .map((activity) => {
         return {
           id: activity.id,
           starttime: activity.start.timepoint.datetime,
@@ -72,7 +69,7 @@ app.post('/', (req, res) => {
     // Send to response url
   })
   res.status(200)
-  res.send(`Searching for "${command.data}"`)
+  res.send(`Searching for "${command.data}"...`)
 })
 
 app.listen(PORT, () => {
