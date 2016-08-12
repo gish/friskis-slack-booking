@@ -1,6 +1,7 @@
 import bodyParser from 'body-parser'
 import express from 'express'
 import moment from 'moment'
+import request from 'request'
 import FriskisApiWrapper from 'friskis-js-api-wrapper'
 
 const PORT = process.env.PORT
@@ -66,7 +67,17 @@ app.post('/', (req, res) => {
 
   findActivities(command.data)
   .then((response) => {
-    // Send to response url
+    console.log(`Sends response to ${responseUrl}`)
+    request.post({
+      json: { text: JSON.stringify(response) },
+      uri: responseUrl
+    }, (error, response, body) => {
+      if (error) {
+        console.log(error)
+      } else {
+        console.log(body)
+      }
+    })
   })
   res.status(200)
   res.send(`Searching for "${command.data}"...`)
