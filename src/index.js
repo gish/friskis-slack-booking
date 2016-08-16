@@ -44,6 +44,10 @@ const findActivities = function (search) {
         ]
       })
 
+      if (foundActivities.length === 0) {
+        resolve('No activities found')
+      }
+
       const table = textTable([['id', 'Time', 'Name', '#slots'], ...foundActivities])
       resolve(table.toString())
     })
