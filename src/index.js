@@ -54,6 +54,39 @@ const findActivities = function (search) {
   })
 }
 
+const bookActivity = function (id) {
+  return new Promise((resolve, reject) => {
+    FriskisApiWrapper.createBooking({
+      apikey: FRISKIS_API_KEY,
+      username: FRISKIS_USERNAME,
+      password: FRISKIS_PASSWORD,
+      activityid: id
+    })
+    .then((response) => {
+      resolve(`Booked activity with id ${id}`)
+    })
+    .catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+const runCommand = function (action, data) {
+  const actions = {
+    find: findActivities,
+    book: bookActivity
+  }
+
+  if (actions[action]) {
+    return actions[action](data)
+  } else {
+    return new Promise((resolve, reject) => {
+      console.error('Unknown command')
+      reject('Unknown command')
+    })
+  }
+}
+
 const sendDelayedReponse = function (responseUrl, params) {
   console.log(`Sends response to ${responseUrl}`)
   console.log(params)
@@ -88,14 +121,17 @@ app.post('/', (req, res) => {
     })
   }
 
-  findActivities(command.data)
+  console.log(`Got command`, command)
+
+  runCommand(command.action, command.data)
   .then((response) => {
     sendDelayedReponse(responseUrl, {
       text: response
     })
   })
+
   res.status(200)
-  res.send(`Searching for "${command.data}"...`)
+  res.send(`Running ${command.action} with "${command.data}"...`)
 })
 
 app.listen(PORT, () => {
