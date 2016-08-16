@@ -2,6 +2,7 @@ import bodyParser from 'body-parser'
 import express from 'express'
 import moment from 'moment'
 import request from 'request'
+import textTable from 'text-table'
 import FriskisApiWrapper from 'friskis-js-api-wrapper'
 
 const PORT = process.env.PORT
@@ -35,14 +36,16 @@ const findActivities = function (search) {
         return name.indexOf(searchParam) !== -1 && bookableSlots > 0
       })
       .map((activity) => {
-        return {
-          id: activity.id,
-          starttime: activity.start.timepoint.datetime,
-          name: activity.product.name,
-          bookableslots: activity.bookableslots
-        }
+        return [
+          activity.id,
+          activity.start.timepoint.datetime,
+          activity.product.name,
+          activity.bookableslots
+        ]
       })
-      resolve(foundActivities)
+
+      const table = textTable([['id', 'Time', 'Name', '#slots'], ...foundActivities])
+      resolve(table.toString())
     })
   })
 }
@@ -84,7 +87,7 @@ app.post('/', (req, res) => {
   findActivities(command.data)
   .then((response) => {
     sendDelayedReponse(responseUrl, {
-      text: JSON.stringify(response)
+      text: response
     })
   })
   res.status(200)
