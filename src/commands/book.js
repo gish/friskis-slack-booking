@@ -14,7 +14,8 @@ const book = function (activityid, options) {
       activityid
     })
     .then((response) => {
-      resolve(`Booked activity with id ${activityid}`)
+      const bookingId = response.activitybooking.id
+      resolve(`Booked activity with booking id ${bookingId}`)
     })
     .catch((e) => {
       reject(e)
