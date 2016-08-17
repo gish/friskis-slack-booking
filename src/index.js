@@ -2,8 +2,8 @@ import bodyParser from 'body-parser'
 import express from 'express'
 import moment from 'moment'
 import request from 'request'
-import textTable from 'text-table'
-import FriskisApiWrapper from 'friskis-js-api-wrapper'
+
+import commands from './commands'
 
 const PORT = process.env.PORT
 const SLACK_TOKEN = process.env.SLACK_TOKEN
@@ -16,65 +16,21 @@ const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
-const findActivities = function (search) {
-  return new Promise((resolve, reject) => {
-    FriskisApiWrapper.getActivities({
+const runCommand = function (action, data) {
+  const actions = {
+    find: (search) => commands.find(search, {
       apikey: FRISKIS_API_KEY,
       username: FRISKIS_USERNAME,
       password: FRISKIS_PASSWORD,
       startDate: moment().add(0, 'days').format('YYYY-MM-DD'),
       endDate: moment().add(5, 'days').format('YYYY-MM-DD'),
       businessunitids: '1'
-    })
-    .then((response) => {
-      const searchParam = search.toLowerCase()
-      const activities = response.activities.activity
-      const foundActivities = activities.filter((activity) => {
-        const name = activity.product.name.toLowerCase()
-        const bookableSlots = parseInt(activity.bookableslots, 10)
-
-        return name.indexOf(searchParam) !== -1 && bookableSlots > 0
-      })
-      .map((activity) => {
-        return [
-          activity.id,
-          activity.start.timepoint.datetime,
-          activity.product.name,
-          activity.bookableslots
-        ]
-      })
-
-      if (foundActivities.length === 0) {
-        resolve('No activities found')
-      }
-
-      const table = textTable([['id', 'Time', 'Name', '#slots'], ...foundActivities])
-      resolve(table.toString())
-    })
-  })
-}
-
-const bookActivity = function (id) {
-  return new Promise((resolve, reject) => {
-    FriskisApiWrapper.createBooking({
+    }),
+    book: (activityid) => commands.book(activityid, {
       apikey: FRISKIS_API_KEY,
       username: FRISKIS_USERNAME,
-      password: FRISKIS_PASSWORD,
-      activityid: id
+      password: FRISKIS_PASSWORD
     })
-    .then((response) => {
-      resolve(`Booked activity with id ${id}`)
-    })
-    .catch((e) => {
-      reject(e)
-    })
-  })
-}
-
-const runCommand = function (action, data) {
-  const actions = {
-    find: findActivities,
-    book: bookActivity
   }
 
   if (actions[action]) {
