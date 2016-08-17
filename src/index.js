@@ -30,6 +30,11 @@ const runCommand = function (action, data) {
       apikey: FRISKIS_API_KEY,
       username: FRISKIS_USERNAME,
       password: FRISKIS_PASSWORD
+    }),
+    cancel: (activityid) => commands.cancel(activityid, {
+      apikey: FRISKIS_API_KEY,
+      username: FRISKIS_USERNAME,
+      password: FRISKIS_PASSWORD
     })
   }
 
