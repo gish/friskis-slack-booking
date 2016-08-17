@@ -1,3 +1,4 @@
+import moment from 'moment'
 import textTable from 'text-table'
 import FriskisApiWrapper from 'friskis-js-api-wrapper'
 
@@ -29,9 +30,14 @@ const find = function (search, options) {
         return name.indexOf(searchParam) !== -1 && bookableSlots > 0
       })
       .map((activity) => {
+        const startTime = activity.start.timepoint.datetime
+        const dayOfWeek = moment(startTime).format('dddd')
+        const time = moment(startTime).format('HH:mm')
+        const formattedStartTime = `${dayOfWeek} ${time}`
+
         return [
           activity.id,
-          activity.start.timepoint.datetime,
+          formattedStartTime,
           activity.product.name,
           activity.bookableslots
         ]
