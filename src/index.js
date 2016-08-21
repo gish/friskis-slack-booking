@@ -7,9 +7,6 @@ import commands from './commands'
 
 const PORT = process.env.PORT
 const SLACK_TOKEN = process.env.SLACK_TOKEN
-const FRISKIS_API_KEY = process.env.FRISKIS_API_KEY
-const FRISKIS_USERNAME = process.env.FRISKIS_USERNAME
-const FRISKIS_PASSWORD = process.env.FRISKIS_PASSWORD
 
 const app = express()
 
@@ -19,23 +16,12 @@ app.use(bodyParser.urlencoded({ extended: true }))
 const runCommand = function (action, data) {
   const actions = {
     find: (search) => commands.find(search, {
-      apikey: FRISKIS_API_KEY,
-      username: FRISKIS_USERNAME,
-      password: FRISKIS_PASSWORD,
       startDate: moment().add(0, 'days').format('YYYY-MM-DD'),
       endDate: moment().add(5, 'days').format('YYYY-MM-DD'),
       businessunitids: '1'
     }),
-    book: (activityid) => commands.book(activityid, {
-      apikey: FRISKIS_API_KEY,
-      username: FRISKIS_USERNAME,
-      password: FRISKIS_PASSWORD
-    }),
-    cancel: (activityid) => commands.cancel(activityid, {
-      apikey: FRISKIS_API_KEY,
-      username: FRISKIS_USERNAME,
-      password: FRISKIS_PASSWORD
-    })
+    book: (activityid) => commands.book(activityid),
+    cancel: (activityid) => commands.cancel(activityid)
   }
 
   if (actions[action]) {

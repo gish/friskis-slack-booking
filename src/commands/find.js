@@ -1,21 +1,14 @@
 import moment from 'moment'
 import textTable from 'text-table'
-import FriskisApiWrapper from 'friskis-js-api-wrapper'
 
-const find = function (search, options) {
+const find = (apiWrapper) => (search, options) => {
   const {
-    apikey,
-    username,
-    password,
     startDate,
     endDate,
     businessunitids
   } = options
   return new Promise((resolve, reject) => {
-    FriskisApiWrapper.getActivities({
-      apikey,
-      username,
-      password,
+    apiWrapper.getActivities({
       startDate,
       endDate,
       businessunitids

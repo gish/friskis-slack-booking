@@ -1,16 +1,8 @@
 import FriskisApiWrapper from 'friskis-js-api-wrapper'
 
-const book = function (activityid, options) {
-  const {
-    apikey,
-    username,
-    password
-  } = options
+const book = (apiWrapper) => (activityid) => {
   return new Promise((resolve, reject) => {
-    FriskisApiWrapper.createBooking({
-      apikey,
-      username,
-      password,
+    apiWrapper.createBooking({
       activityid
     })
     .then((response) => {
