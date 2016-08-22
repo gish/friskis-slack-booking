@@ -16,8 +16,8 @@ app.use(bodyParser.urlencoded({ extended: true }))
 const runCommand = function (action, data) {
   const actions = {
     find: (search) => commands.find(search, {
-      startDate: moment().add(0, 'days').format('YYYY-MM-DD'),
-      endDate: moment().add(5, 'days').format('YYYY-MM-DD'),
+      startdate: moment().add(0, 'days').format('YYYY-MM-DD'),
+      enddate: moment().add(5, 'days').format('YYYY-MM-DD'),
       businessunitids: '1'
     }),
     book: (activityid) => commands.book(activityid),
