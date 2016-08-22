@@ -26,11 +26,11 @@ const find = (apiWrapper) => (search, options) => {
         const startTime = activity.start.timepoint.datetime
         const dayOfWeek = moment(startTime).format('dddd')
         const time = moment(startTime).format('HH:mm')
-        const formattedStartTime = `${dayOfWeek} ${time}`
 
         return [
           activity.id,
-          formattedStartTime,
+          dayOfWeek,
+          time,
           activity.product.name,
           activity.bookableslots
         ]
