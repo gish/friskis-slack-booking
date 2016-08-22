@@ -3,14 +3,14 @@ import textTable from 'text-table'
 
 const find = (apiWrapper) => (search, options) => {
   const {
-    startDate,
-    endDate,
+    startdate,
+    enddate,
     businessunitids
   } = options
   return new Promise((resolve, reject) => {
     apiWrapper.getActivities({
-      startDate,
-      endDate,
+      startdate,
+      enddate,
       businessunitids
     })
     .then((response) => {
