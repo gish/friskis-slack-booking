@@ -40,8 +40,9 @@ const find = (apiWrapper) => (search, options) => {
         resolve('No activities found')
       }
 
-      const table = textTable([['id', 'Time', 'Name', '#slots'], ...foundActivities])
-      resolve(table.toString())
+      const table = textTable(foundActivities)
+      const spacedTable = `\`\`\`${table.toString()}\`\`\``
+      resolve(spacedTable)
     })
   })
 }
