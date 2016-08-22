@@ -1,5 +1,3 @@
-import FriskisApiWrapper from 'friskis-js-api-wrapper'
-
 const book = (apiWrapper) => (activityid) => {
   return new Promise((resolve, reject) => {
     apiWrapper.createBooking({

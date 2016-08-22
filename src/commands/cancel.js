@@ -1,5 +1,3 @@
-import FriskisApiWrapper from 'friskis-js-api-wrapper'
-
 const cancel = (apiWrapper) => (id) => {
   return new Promise((resolve, reject) => {
     apiWrapper.deleteBooking({
