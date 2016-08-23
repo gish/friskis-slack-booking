@@ -85,8 +85,14 @@ app.post('/', (req, res) => {
     })
   })
 
+  let responseString = `Running ${command.action}`
+  if (command.data) {
+    responseString = `${responseString} with "${command.data}"`
+  }
+  responseString = `${responseString}...`
+
   res.status(200)
-  res.send(`Running ${command.action} with "${command.data}"...`)
+  res.send(responseString)
 })
 
 app.listen(PORT, () => {
