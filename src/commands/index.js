@@ -3,6 +3,7 @@ import FriskisJsApiWrapper from 'friskis-js-api-wrapper'
 import book from './book'
 import cancel from './cancel'
 import find from './find'
+import list from './list'
 
 const FRISKIS_API_KEY = process.env.FRISKIS_API_KEY
 const FRISKIS_USERNAME = process.env.FRISKIS_USERNAME
@@ -17,5 +18,6 @@ const apiHandler = FriskisJsApiWrapper({
 export default {
   book: book(apiHandler),
   cancel: cancel(apiHandler),
-  find: find(apiHandler)
+  find: find(apiHandler),
+  list: list(apiHandler)
 }

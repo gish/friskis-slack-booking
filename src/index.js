@@ -13,7 +13,7 @@ const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
-const runCommand = function (action, data) {
+const runCommand = (action, data) => {
   const actions = {
     find: (search) => commands.find(search, {
       startdate: moment().add(0, 'days').format('YYYY-MM-DD'),
@@ -21,7 +21,8 @@ const runCommand = function (action, data) {
       businessunitids: '1'
     }),
     book: (activityid) => commands.book(activityid),
-    cancel: (activityid) => commands.cancel(activityid)
+    cancel: (activityid) => commands.cancel(activityid),
+    list: commands.list
   }
 
   if (actions[action]) {
@@ -34,7 +35,7 @@ const runCommand = function (action, data) {
   }
 }
 
-const sendDelayedReponse = function (responseUrl, params) {
+const sendDelayedReponse = (responseUrl, params) => {
   console.log(`Sends response to ${responseUrl}`)
   console.log(params)
   request.post({
@@ -49,14 +50,21 @@ const sendDelayedReponse = function (responseUrl, params) {
   })
 }
 
+const getAction = (text) => {
+  return text.match(/^([a-z]+)/).slice(1)[0]
+}
+
+const getActionData = (text) => {
+  return /^([a-z]+) ([a-z0-9]+)$/.test(text) && text.match(/^([a-z]+) ([a-z0-9]+)$/).slice(2)[0]
+}
+
 app.post('/', (req, res) => {
   const token = req.body.token
   const text = req.body.text
   const responseUrl = req.body.response_url
-  const payload = text.match(/^([a-z]+) ([a-z0-9]+)$/).slice(1)
   const command = {
-    action: payload[0],
-    data: payload[1]
+    action: getAction(text),
+    data: getActionData(text)
   }
 
   if (token !== SLACK_TOKEN) {
